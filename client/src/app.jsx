@@ -6,8 +6,6 @@ import Join from "./components/join/join";
 const App = () => {
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
 
   const handleOnClick = (event) => {
     if (!name || !room) {
@@ -25,14 +23,6 @@ const App = () => {
     setRoom(value);
   };
 
-  const updateMessage = (value) => {
-    setMessage(value);
-  };
-
-  const updateMessages = (value) => {
-    setMessages(value);
-  };
-
   return (
     <Router>
       <Route path="/" exact>
@@ -46,12 +36,10 @@ const App = () => {
       </Route>
       <Route path="/chat">
         <Chat
-          message={message}
-          messages={messages}
-          updateName={updateName}
+          name={name}
+          room={room}
           updateRoom={updateRoom}
-          updateMessage={updateMessage}
-          updateMessages={updateMessages}
+          updateName={updateName}
         />
       </Route>
     </Router>

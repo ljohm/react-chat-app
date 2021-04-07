@@ -1,22 +1,39 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import queryString from "query-string";
 import { useLocation } from "react-router";
 import io from "socket.io-client";
 import styles from "./chat.module.css";
+import InfoBar from "../infoBar/infoBar";
+import Input from "../input/input";
+import Messages from "../messages/messages";
+import TextContainer from "../textContainer/textContainer";
 
 const ENDPOINT = "localhost:5000";
 
 let socket;
 
-const Chat = ({
-  message,
-  messages,
-  updateRoom,
-  updateName,
-  updateMessage,
-  updateMessages,
-}) => {
+const Chat = ({ name, room, updateRoom, updateName }) => {
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [users, setUsers] = useState("");
   const location = useLocation();
+
+  const updateMessage = (value) => {
+    setMessage(value);
+  };
+
+  const updateMessages = (value) => {
+    setMessages(value);
+  };
+
+  const sendMessage = (event) => {
+    event.preventDefault();
+    if (message) {
+      socket.emit("sendMessage", message, () => {
+        updateMessage("");
+      });
+    }
+  };
 
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
@@ -31,7 +48,7 @@ const Chat = ({
       socket.emit("disconnect");
       socket.off();
     };
-  }, [ENDPOINT, location.search]);
+  }, [location.search]);
 
   useEffect(() => {
     socket.on("message", (message) => {
@@ -39,33 +56,26 @@ const Chat = ({
     });
   }, [messages]);
 
-  const sendMessage = (event) => {
-    event.preventDefault();
-    if (message) {
-      socket.emit("sendMessage", message, () => {
-        updateMessage("");
-      });
-    }
-  };
-
-  console.log(message, messages);
+  useEffect(() => {
+    socket.on("roomData", ({ users }) => {
+      setUsers(users);
+    });
+  });
 
   return (
     <div className={styles.outerContainer}>
       <div className={styles.innerContainer}>
-        <input
-          value={message}
-          onChange={(event) => updateMessage(event.target.value)}
-          onKeyPress={(event) =>
-            event.key === "Enter" ? sendMessage(event) : null
-          }
+        <InfoBar room={room} />
+        <Messages messages={messages} message={message} name={name} />
+        <Input
+          message={message}
+          updateMessage={updateMessage}
+          sendMessage={sendMessage}
         />
       </div>
+      <TextContainer users={users} />
     </div>
   );
 };
-
-//server - client 연결 완료 v
-//chat에서 왜 name과 room을 다시 선언하는지..? 부터
 
 export default Chat;
