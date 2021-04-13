@@ -1,23 +1,21 @@
-import React, { useState } from "react";
-import { GoogleLogin } from "react-google-login";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
+import styles from "./login.module.css";
 
-const Login = (props) => {
-  const [state, setState] = useState({});
+const Login = ({ authService }) => {
   const history = useHistory();
-
-  const responseGoogle = (res) => {
-    setState({
-      id: res.googleId,
-      name: res.profileObj.name,
-      provider: "google",
-    });
-    goToHome(res.googleId);
+  const onLogin = (event) => {
+    authService //
+      .login(event.currentTarget.textContent)
+      .then((data) => goToHome(data.user.uid));
   };
 
-  const responseFail = (err) => {
-    console.error(err);
-  };
+  useEffect(() => {
+    authService //
+      .onAuthChange((user) => {
+        user && goToHome(user.uid);
+      });
+  });
 
   const goToHome = (userId) => {
     history.push({
@@ -27,12 +25,9 @@ const Login = (props) => {
   };
 
   return (
-    <GoogleLogin
-      clientId="clientID"
-      buttonText="Google"
-      onSuccess={responseGoogle}
-      onFailure={responseFail}
-    />
+    <button className={styles.button} onClick={onLogin}>
+      Google
+    </button>
   );
 };
 
