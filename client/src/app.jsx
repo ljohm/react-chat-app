@@ -1,48 +1,23 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import Chat from "./components/chat/chat";
-import Join from "./components/join/join";
+import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import styles from "./app.module.css";
+import Login from "./components/login/login";
+import Home from "./components/home/home";
 
-const App = () => {
-  const [name, setName] = useState("");
-  const [room, setRoom] = useState("");
-
-  const handleOnClick = (event) => {
-    if (!name || !room) {
-      event.preventDefault();
-    } else {
-      return;
-    }
-  };
-
-  const updateName = (value) => {
-    setName(value);
-  };
-
-  const updateRoom = (value) => {
-    setRoom(value);
-  };
-
+const App = ({ authService }) => {
   return (
-    <Router>
-      <Route path="/" exact>
-        <Join
-          name={name}
-          room={room}
-          updateName={updateName}
-          updateRoom={updateRoom}
-          handleOnClick={handleOnClick}
-        />
-      </Route>
-      <Route path="/chat">
-        <Chat
-          name={name}
-          room={room}
-          updateRoom={updateRoom}
-          updateName={updateName}
-        />
-      </Route>
-    </Router>
+    <div className={styles.app}>
+      <Router>
+        <Switch>
+          <Route path="/" exact>
+            <Login authService={authService} />
+          </Route>
+          <Route path="/home">
+            <Home authService={authService} />
+          </Route>
+        </Switch>
+      </Router>
+    </div>
   );
 };
 

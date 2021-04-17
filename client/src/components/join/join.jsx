@@ -1,48 +1,72 @@
-//import React, { useState } from "react";
+import { useRef } from "react";
 import styles from "./join.module.css";
-import { Link } from "react-router-dom";
 
-const Join = ({ name, room, updateName, updateRoom, handleOnClick }) => {
-  const handleChangeName = (event) => {
-    const value = event.target.value;
-    updateName(value);
+const Join = ({
+  updateName,
+  updateRoom,
+  onAdd,
+  updateJoinSuccess,
+  updateInputClicked,
+}) => {
+  const buttonRef = useRef();
+  const nameRef = useRef();
+  const roomRef = useRef();
+
+  const onSubmit = (event) => {
+    const name = nameRef.current.value;
+    const room = roomRef.current.value;
+
+    if (!name || !room) {
+      event.preventDefault();
+    } else {
+      updateName(name);
+      updateRoom(room);
+      updateInputClicked();
+      updateJoinSuccess();
+
+      const newRoom = {
+        room,
+        users: [name],
+      };
+      onAdd(newRoom);
+    }
   };
 
-  const handleChangeRoom = (event) => {
-    const value = event.target.value;
-    updateRoom(value);
-  };
-
-  const handleClick = (event) => {
-    handleOnClick(event);
+  const onKeyPress = (event) => {
+    if (event.key === "Enter") {
+      buttonRef.current.click();
+    } else {
+      return;
+    }
   };
 
   return (
-    <div className={styles.outerContainer}>
-      <div className={styles.innerContainer}>
-        <h1 className={styles.header}>join</h1>
-        <div>
-          <input
-            placeholder="Name"
-            className={styles.input}
-            type="text"
-            onChange={handleChangeName}
-          />
-        </div>
-        <div>
-          <input
-            placeholder="Room"
-            className={styles.input}
-            type="text"
-            onChange={handleChangeRoom}
-          />
-        </div>
-        <Link onClick={handleClick} to={`/chat?name=${name}&room=${room}`}>
-          <button className={styles.button} type="submit">
-            Sign In
-          </button>
-        </Link>
-      </div>
+    <div className={styles.container}>
+      <h1 className={styles.header}>join</h1>
+      <input
+        ref={nameRef}
+        className={styles.input}
+        placeholder="Name"
+        name="name"
+        type="text"
+        onKeyPress={onKeyPress}
+      />
+      <input
+        ref={roomRef}
+        className={styles.input}
+        placeholder="Room"
+        name="room"
+        type="text"
+        onKeyPress={onKeyPress}
+      />
+      <button
+        onClick={onSubmit}
+        ref={buttonRef}
+        className={styles.button}
+        type="submit"
+      >
+        Sign In
+      </button>
     </div>
   );
 };

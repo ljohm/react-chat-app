@@ -17,11 +17,14 @@ socketio.on("connection", (socket) => {
     // if (error) return callback(error);
     socket.emit("message", {
       user: "admin",
-      text: `${user.name}, welcome to the room ${user.room}`,
+      room,
+      text: `${user.name}님이 입장했습니다`,
     });
-    socket.broadcast
-      .to(user.room)
-      .emit("message", { user: "admin", text: `${user.name}, has joined!` });
+    socket.broadcast.to(user.room).emit("message", {
+      user: "admin",
+      room,
+      text: `${user.name}님이 입장했습니다`,
+    });
     socket.join(user.room);
 
     socketio
@@ -33,22 +36,24 @@ socketio.on("connection", (socket) => {
 
   socket.on("sendMessage", (message, callback) => {
     const user = getUser(socket.id);
-    socketio.to(user.room).emit("message", { user: user.name, text: message });
+    socketio
+      .to(user.room)
+      .emit("message", { user: user.name, room: user.room, text: message });
     callback();
   });
 
   socket.on("disconnect", () => {
     const user = removeUser(socket.id);
     if (user) {
-      socketio
-        .to(user.room)
-        .emit("message", { user: "admin", text: `${user.name} has left` });
-      socketio
-        .to(user.room)
-        .emit("roomData", {
-          room: user.room,
-          users: getUsersInRoom(user.room),
-        });
+      socketio.to(user.room).emit("message", {
+        user: "admin",
+        room: user.room,
+        text: `${user.name}님이 나갔습니다`,
+      });
+      socketio.to(user.room).emit("roomData", {
+        room: user.room,
+        users: getUsersInRoom(user.room),
+      });
     }
   });
 });
