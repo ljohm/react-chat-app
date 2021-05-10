@@ -11,10 +11,10 @@ const ENDPOINT = "localhost:5000";
 
 let socket;
 
-const Chat = ({ name, room, updateRoom, updateName, handleNowUsers }) => {
+const Chat = ({ name, room, updateRoom, updateName }) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [nowUsers, setNowUsers] = useState("");
+  // const [nowUsers, setNowUsers] = useState("");
   // const location = useLocation();
 
   const updateMessage = (value) => {
@@ -48,24 +48,18 @@ const Chat = ({ name, room, updateRoom, updateName, handleNowUsers }) => {
   useEffect(() => {
     socket.on("message", (message) => {
       updateMessages([...messages, message]);
+      // handleUsers(messages);
     });
+    // console.log(messages);
   }, [messages, message]);
 
   useEffect(() => {
-    socket.on("roomData", ({ users }) => {
-      setNowUsers(users);
-      handleNowUsers(nowUsers);
+    socket.on("roomData", ({ room, users }) => {
+      // setNowUsers(users);
+      // handleUsers({ users });
+      // console.log({ users });
     });
-  }, [nowUsers]);
-  // useEffect(() => {
-  //   socket.on("roomData", (users) => {
-  //     // updateUsers({
-  //     //   ...card,
-  //     //   fileName: file.name,
-  //     //   fileURL: file.url,
-  //     // });
-  //   });
-  // });
+  }, []); // ??
 
   return (
     <section className={styles.chat}>

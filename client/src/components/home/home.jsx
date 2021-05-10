@@ -30,6 +30,11 @@ const Home = ({ authService }) => {
     setJoinSucceess(true);
   };
 
+  // const handleUsers = ({ messages }) => {
+  //   // setUsers(users);
+  //   console.log({ messages });
+  // };
+
   // const onLogout = () => {
   //   authService.logout();
   // };
@@ -49,6 +54,7 @@ const Home = ({ authService }) => {
       return updated;
     });
   };
+  console.log(rooms);
 
   useEffect(() => {
     authService.onAuthChange((user) => {

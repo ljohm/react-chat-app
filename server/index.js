@@ -5,7 +5,13 @@ const socketio = require("socket.io")(http, {
     origin: "*",
   },
 });
-const { addUser, removeUser, getUser, getUsersInRoom } = require("./users.js");
+const {
+  addUser,
+  removeUser,
+  getUser,
+  getUsers,
+  getUsersInRoom,
+} = require("./users.js");
 
 const PORT = process.env.PORT || 5000;
 
@@ -29,7 +35,8 @@ socketio.on("connection", (socket) => {
 
     socketio
       .to(user.room)
-      .emit("roomData", { room: user.room, users: getUsersInRoom(user.room) });
+      // .emit("roomData", { room: user.room, users: getUsersInRoom(user.room) });
+      .emit("roomData", { room: user.room, users: getUsers() });
 
     // callback(); //?
   });
