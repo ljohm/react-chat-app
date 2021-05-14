@@ -84,8 +84,5 @@ router.get("/:id", async (req, res) => {
     res.status(500).json(err);
   }
 });
-// router.get("/", (req, res) => {
-//   res.send("server is up and running");
-// });
 
 module.exports = router;
