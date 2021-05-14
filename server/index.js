@@ -8,6 +8,9 @@ const app = express();
 const http = require("http").createServer(app);
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
+const convRoute = require("./routes/conversations");
+const msgRoute = require("./routes/messages");
+
 const socketio = require("socket.io")(http, {
   cors: {
     origin: "*",
@@ -94,6 +97,8 @@ app.use(helmet());
 app.use(morgan("common"));
 app.use("/server/users", userRoute);
 app.use("/server/auth", authRoute);
+app.use("/server/conversations", convRoute);
+app.use("/server/messages", msgRoute);
 
 http.listen(PORT, () => {
   console.log(`Server has started on port ${PORT}`);
