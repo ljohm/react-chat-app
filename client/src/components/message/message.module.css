@@ -27,7 +27,8 @@ p {
 }
 
 .byMe .messageBox {
-  background-color: rgb(235, 235, 235);
+  background-color: #f03c64;
+  color: white;
 }
 
 .byOthers {
@@ -35,8 +36,7 @@ p {
 }
 
 .byOthers .messageBox {
-  background-color: #f03c64;
-  color: white;
+  background-color: rgb(235, 235, 235);
   max-width: 80%;
 }
 

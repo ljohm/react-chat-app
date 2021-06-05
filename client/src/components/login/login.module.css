@@ -1,0 +1,45 @@
+* {
+  box-sizing: border-box;
+}
+
+.login {
+  width: 30em;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  text-align: center;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5em;
+  list-style: none;
+}
+
+.button {
+  width: 100%;
+  margin-top: 0.5em;
+  outline: none;
+  border: 3px solid #3f708d;
+  border-radius: 20px;
+  font-size: 1.3rem;
+  padding: 0.5em;
+  background-color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+}
+
+.button:hover {
+  background-color: lightpink;
+}
+
+.loading {
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  border: 3px solid lightgray;
+  border-top: 3px solid pink;
+  animation: spin 2s linear infinite;
+}

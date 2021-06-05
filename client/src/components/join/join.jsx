@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import styles from "./join.module.css";
 
 const Join = ({
@@ -7,10 +7,13 @@ const Join = ({
   onAdd,
   updateJoinSuccess,
   updateInputClicked,
+  currentUsers,
+  setNowUsers,
 }) => {
   const buttonRef = useRef();
   const nameRef = useRef();
   const roomRef = useRef();
+  const [users, setUsers] = useState([]);
 
   const onSubmit = (event) => {
     const name = nameRef.current.value;
@@ -24,9 +27,16 @@ const Join = ({
       updateInputClicked();
       updateJoinSuccess();
 
+      // let arr = [...currentUsers];
+      // arr.push(name);
+      // setCurrentUsers(arr);
+      setNowUsers((users) => [...users, name]);
       const newRoom = {
         room,
-        users: [name],
+        users: currentUsers,
+        // users: arr,
+        lastMsg: "",
+        date: "",
       };
       onAdd(newRoom);
     }

@@ -1,3 +1,4 @@
 .homeList {
   flex-basis: 40%;
+  overflow-y: auto;
 }

@@ -1,6 +1,7 @@
 // const app = require("express")();
 const dotenv = require("dotenv");
 const helmet = require("helmet");
+const cors = require("cors");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const express = require("express");
@@ -92,6 +93,12 @@ socketio.on("connection", (socket) => {
 });
 
 // app.use(router);
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
