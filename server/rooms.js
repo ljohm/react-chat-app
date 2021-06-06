@@ -8,6 +8,5 @@ const addRoom = (user, users) => {
   // console.log(users);
   updated[`${user.room}`].users = users;
 };
-console.log(rooms);
 
 module.exports = { addRoom };

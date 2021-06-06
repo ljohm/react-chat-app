@@ -26,7 +26,6 @@ const Login = ({ authService }) => {
       dispatch
     );
     // setLoading(false);
-    console.log(user);
   };
 
   const onAuthLogin = (event) => {

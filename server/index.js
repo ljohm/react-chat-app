@@ -17,6 +17,7 @@ const socketio = require("socket.io")(http, {
     origin: "*",
   },
 });
+
 const {
   addUser,
   removeUser,
@@ -42,53 +43,45 @@ mongoose.connect(
   }
 );
 
+let users = [];
+
+const addUserToArray = (userId, socketId) => {
+  !users.some((user) => user.userId === userId) &&
+    users.push({ userId, socketId });
+};
+
+const removeUserFromArray = (socketId) => {
+  users = users.filter((user) => user.socketId !== socketId);
+};
+
+const getUsersFromArray = (userId) => {
+  return users.find((user) => user.userId === userId);
+};
+
 socketio.on("connection", (socket) => {
-  socket.on("join", ({ name, room }, callback) => {
-    const { error, user } = addUser({ id: socket.id, name, room });
-    // if (error) return callback(error);
-    const users = getUsersInRoom(user.room);
-    addRoom(user, users);
-    socket.emit("message", {
-      user: "admin",
-      room,
-      text: `${user.name}님이 입장했습니다`,
-    });
-    socket.broadcast.to(user.room).emit("message", {
-      user: "admin",
-      room,
-      text: `${user.name}님이 입장했습니다`,
-    });
-    socket.join(user.room);
+  // when connect
+  console.log("a user connected");
 
-    socketio
-      .to(user.room)
-      // .emit("roomData", { room: user.room, users: getUsersInRoom(user.room) });
-      .emit("roomData", { users: getUsers() });
-
-    // callback(); //?
+  // take userId and socketId from user
+  socket.on("addUserToArray", (userId) => {
+    addUserToArray(userId, socket.id);
+    socketio.emit("getUsers", users);
   });
 
-  socket.on("sendMessage", (message, callback) => {
-    const user = getUser(socket.id);
-    socketio
-      .to(user.room)
-      .emit("message", { user: user.name, room: user.room, text: message });
-    callback();
+  // send and get message
+  socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+    const user = getUsersFromArray(receiverId);
+    socketio.to(user.socketId).emit("getMessage", {
+      senderId,
+      text,
+    });
   });
 
+  // when disconnect
   socket.on("disconnect", () => {
-    const user = removeUser(socket.id);
-    if (user) {
-      socketio.to(user.room).emit("message", {
-        user: "admin",
-        room: user.room,
-        text: `${user.name}님이 나갔습니다`,
-      });
-      socketio.to(user.room).emit("roomData", {
-        room: user.room,
-        users: getUsersInRoom(user.room),
-      });
-    }
+    console.log("a user disconnected");
+    removeUserFromArray(socket.id);
+    socketio.emit("getUsers", users);
   });
 });
 

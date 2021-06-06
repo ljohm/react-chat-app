@@ -12,6 +12,7 @@ import HomeList from "../homeList/homeList";
 import Join from "../join/join";
 import styles from "./home.module.css";
 import axios from "axios";
+import { io } from "socket.io-client";
 
 const Home = ({ authService }) => {
   const history = useHistory();
@@ -27,6 +28,32 @@ const Home = ({ authService }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [currentChat, setCurrentChat] = useState(null);
+  const socket = useRef();
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+
+  useEffect(() => {
+    socket.current = io("ws://localhost:5000");
+    socket.current.on("getMessage", (data) => {
+      setArrivalMessage({
+        sender: data.senderId,
+        text: data.text,
+        createdAt: Date.now(),
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    arrivalMessage &&
+      currentChat?.members.includes(arrivalMessage.sender) &&
+      setMessages((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage, currentChat]);
+
+  useEffect(() => {
+    socket.current.emit("addUserToArray", user._id);
+    socket.current.on("getUsers", (users) => {
+      console.log(users);
+    });
+  }, [user]);
 
   useEffect(() => {
     const getConversations = async () => {
@@ -64,6 +91,16 @@ const Home = ({ authService }) => {
       text: newMessage,
       conversationId: currentChat._id,
     };
+
+    const receiverId = currentChat.members.find(
+      (member) => member !== user._id
+    );
+
+    socket.current.emit("sendMessage", {
+      senderId: user._id,
+      receiverId,
+      text: newMessage,
+    });
 
     try {
       const res = await axios.post(

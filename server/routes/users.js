@@ -84,6 +84,7 @@ router.delete("/:id", async (req, res) => {
 //     res.status(500).json(err);
 //   }
 // });
+
 router.get("/", async (req, res) => {
   const userId = req.query.userId;
   const username = req.query.username;
